@@ -2,8 +2,8 @@
 name = "chimera-mapper"
 version = "0.1.0"
 edition = "2024"
-homepage = "https://github.com/SKetU-l/chimera-mapper"
-repository = "https://github.com/SKetU-l/chimera-mapper"
+homepage = "https://github.com/D3OXY/chimera-mapper"
+repository = "https://github.com/D3OXY/chimera-mapper"
 description = "Cross-platform HID mapper for Chimera mouse side buttons"
 
 [dependencies]

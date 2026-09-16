@@ -5,20 +5,33 @@ HID side-button mapper for **Kreo Chimera V1** mouse.
 ## Install
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/SKetU-l/chimera-mapper/main/scripts/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/D3OXY/chimera-mapper/main/scripts/install.sh | bash
 ```
 
 The installer will:
+
 - Build from source
-- Set up auto-start on system boot
-- Configure the app to run in the background
+- Install the binary at `~/.local/bin/chimera-mapper` on macOS
+- Start the mapper in the background
+- Set up auto-start with a per-user LaunchAgent
+
+### macOS permissions
+
+On first install, allow `~/.local/bin/chimera-mapper` under **System Settings → Privacy & Security → Accessibility**. macOS requires this permission before the mapper can send keyboard or mouse events.
+
+Check the background service and follow its logs with:
+
+```bash
+launchctl print "gui/$(id -u)/com.sketu.chimera-mapper"
+tail -f ~/Library/Logs/chimera-mapper.err.log
+```
 
 ---
 
 ## Uninstall
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/SKetU-l/chimera-mapper/main/scripts/uninstall.sh | bash
+curl -fsSL https://raw.githubusercontent.com/D3OXY/chimera-mapper/main/scripts/uninstall.sh | bash
 ```
 
 This removes the app and auto-start configuration.
@@ -116,7 +129,7 @@ Current development/testing device: **Kreo Chimera V1**
 Other brands/models are **not tested yet**, so compatibility is **not confirmed**.
 
 > [!NOTE]
-> Currently, the Hackintosh system that was used to test this on macOS has been removed. Consequently, the macOS version is quite untested.
+> macOS support was verified on Apple silicon with macOS 27.0 and a Kreo Chimera at `0x248a:0x5b4a`. The release build, HID discovery, automatic device selection, and mapper startup all pass. Other macOS versions and Intel Macs have not been tested yet.
 
 ---
 

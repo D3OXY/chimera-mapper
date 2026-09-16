@@ -3,7 +3,7 @@ set -euo pipefail
 
 BIN_NAME="chimera-mapper"
 SERVICE_LABEL="com.sketu.chimera-mapper"
-REPO_OWNER="SKetU-l"
+REPO_OWNER="D3OXY"
 REPO_NAME="chimera-mapper"
 REPO_URL="https://github.com/${REPO_OWNER}/${REPO_NAME}.git"
 LINUX_MODULES_LOAD="/etc/modules-load.d/${BIN_NAME}.conf"
