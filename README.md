@@ -12,12 +12,18 @@ The installer will:
 
 - Build from source
 - Install the binary at `~/.local/bin/chimera-mapper` on macOS
+- Install a background app at `~/Applications/Chimera Mapper.app`
 - Start the mapper in the background
 - Set up auto-start with a per-user LaunchAgent
 
 ### macOS permissions
 
-On first install, allow `~/.local/bin/chimera-mapper` under **System Settings → Privacy & Security → Accessibility**. macOS requires this permission before the mapper can send keyboard or mouse events.
+On first install, allow **Chimera Mapper** in both:
+
+- **System Settings → Privacy & Security → Accessibility** (to post mouse events)
+- **System Settings → Privacy & Security → Input Monitoring** (to read the mouse HID reports)
+
+The background service runs the signed app wrapper rather than the standalone Cargo binary so macOS can retain a stable privacy identity across upgrades. If you previously granted the raw `chimera-mapper` executable, remove that old entry and grant the new **Chimera Mapper** app instead.
 
 Check the background service and follow its logs with:
 
@@ -30,7 +36,7 @@ To inspect the native mouse events in the foreground, stop the background servic
 
 ```bash
 launchctl bootout "gui/$(id -u)/com.sketu.chimera-mapper"
-CHIMERA_MAPPER_LOG_EVENTS=1 ~/.local/bin/chimera-mapper run
+CHIMERA_MAPPER_LOG_EVENTS=1 ~/Applications/Chimera\ Mapper.app/Contents/MacOS/chimera-mapper run
 ```
 
 Back emits macOS button 3 and Forward emits button 4. Each press produces a matching `OtherMouseDown` and `OtherMouseUp` event at the HID event tap. Restart auto-start mode after testing with:

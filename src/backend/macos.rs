@@ -16,6 +16,13 @@ unsafe extern "C" {
         mouse_button: u32,
     ) -> CGEventRef;
     fn CGPreflightPostEventAccess() -> bool;
+    fn CGRequestPostEventAccess() -> bool;
+}
+
+#[link(name = "IOKit", kind = "framework")]
+unsafe extern "C" {
+    fn IOHIDCheckAccess(request_type: i32) -> i32;
+    fn IOHIDRequestAccess(request_type: i32) -> bool;
 }
 
 const MAC_BUTTON_LEFT: u32 = 0;
@@ -23,6 +30,9 @@ const MAC_BUTTON_RIGHT: u32 = 1;
 const MAC_BUTTON_MIDDLE: u32 = 2;
 const MAC_BUTTON_BACK: u32 = 3;
 const MAC_BUTTON_FORWARD: u32 = 4;
+const HID_REQUEST_LISTEN_EVENT: i32 = 1;
+const HID_ACCESS_GRANTED: i32 = 0;
+const HID_ACCESS_UNKNOWN: i32 = 2;
 
 pub struct Emitter {
     source: CGEventSource,
@@ -103,7 +113,15 @@ fn create_mouse_event(
 }
 
 fn can_post_events() -> bool {
-    unsafe { CGPreflightPostEventAccess() }
+    unsafe { CGPreflightPostEventAccess() || CGRequestPostEventAccess() }
+}
+
+fn can_read_hid_events() -> bool {
+    match unsafe { IOHIDCheckAccess(HID_REQUEST_LISTEN_EVENT) } {
+        HID_ACCESS_GRANTED => true,
+        HID_ACCESS_UNKNOWN => unsafe { IOHIDRequestAccess(HID_REQUEST_LISTEN_EVENT) },
+        _ => false,
+    }
 }
 
 variant_map! {
@@ -151,7 +169,13 @@ impl Emitter {
     pub fn new(_name: &str) -> AppResult<Self> {
         if !can_post_events() {
             return Err(
-                "macOS denied event posting; allow ~/.local/bin/chimera-mapper in System Settings > Privacy & Security > Accessibility, then restart the service"
+                "macOS denied event posting; allow Chimera Mapper in System Settings > Privacy & Security > Accessibility, then restart the service"
+                    .into(),
+            );
+        }
+        if !can_read_hid_events() {
+            return Err(
+                "macOS denied HID input; allow Chimera Mapper in System Settings > Privacy & Security > Input Monitoring, then restart the service"
                     .into(),
             );
         }
