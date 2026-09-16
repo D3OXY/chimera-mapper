@@ -26,6 +26,19 @@ launchctl print "gui/$(id -u)/com.sketu.chimera-mapper"
 tail -f ~/Library/Logs/chimera-mapper.err.log
 ```
 
+To inspect the native mouse events in the foreground, stop the background service and enable event logging:
+
+```bash
+launchctl bootout "gui/$(id -u)/com.sketu.chimera-mapper"
+CHIMERA_MAPPER_LOG_EVENTS=1 ~/.local/bin/chimera-mapper run
+```
+
+Back emits macOS button 3 and Forward emits button 4. Each press produces a matching `OtherMouseDown` and `OtherMouseUp` event at the HID event tap. Restart auto-start mode after testing with:
+
+```bash
+launchctl bootstrap "gui/$(id -u)" ~/Library/LaunchAgents/com.sketu.chimera-mapper.plist
+```
+
 ---
 
 ## Uninstall
